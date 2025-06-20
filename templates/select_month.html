@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Select Month | Attendance Pro</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --secondary: #3f37c9;
+      --accent: #4cc9f0;
+      --warning: #f59e0b;
+      --light: #f8f9fa;
+      --dark: #1e293b;
+      --glass: rgba(255, 255, 255, 0.25);
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      padding: 2rem;
+      color: var(--dark);
+    }
+    
+    .month-container {
+      background: var(--glass);
+      backdrop-filter: blur(16px);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .page-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .page-title {
+      font-weight: 700;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+    
+    .month-list {
+      background: rgba(255,255,255,0.6);
+      backdrop-filter: blur(10px);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      margin: 2rem 0;
+    }
+    
+    .month-item {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255,255,255,0.8);
+      transition: all 0.3s ease;
+    }
+    
+    .month-item:last-child {
+      border-bottom: none;
+    }
+    
+    .month-item:hover {
+      background: white;
+      transform: translateX(5px);
+    }
+    
+    .month-name {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-weight: 500;
+    }
+    
+    .month-icon {
+      color: var(--primary);
+      font-size: 1.25rem;
+      width: 36px;
+      height: 36px;
+      background: rgba(67, 97, 238, 0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .btn-view {
+      background: linear-gradient(45deg, var(--primary), var(--accent));
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .btn-view:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(67, 97, 238, 0.3);
+    }
+    
+    .empty-state {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      color: var(--warning);
+      border-radius: 14px;
+      padding: 1.5rem;
+      text-align: center;
+      margin: 2rem 0;
+    }
+    
+    .empty-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    
+    .btn-back {
+      background: rgba(255,255,255,0.3);
+      border: 1px solid rgba(255,255,255,0.4);
+      color: var(--dark);
+      border-radius: 10px;
+      padding: 0.75rem 1.5rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+    }
+    
+    .btn-back:hover {
+      background: rgba(255,255,255,0.5);
+      transform: translateY(-2px);
+      color: var(--dark);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="month-container">
+      <div class="page-header">
+        <h1 class="page-title">
+          <i class="fas fa-chart-bar"></i> Attendance Summary
+        </h1>
+        <p>Select a month to view detailed attendance analytics</p>
+      </div>
+
+      {% if months %}
+        <div class="month-list">
+          <ul class="list-group">
+            {% for month in months %}
+            <li class="month-item">
+              <div class="month-name">
+                <div class="month-icon">
+                  <i class="fas fa-calendar-alt"></i>
+                </div>
+                {{ month }}
+              </div>
+              <a href="{{ url_for('attendance_summary', month=month) }}" class="btn btn-view">
+                <i class="fas fa-chart-line"></i> View
+              </a>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% else %}
+        <div class="empty-state">
+          <div class="empty-icon">
+            <i class="fas fa-calendar-times"></i>
+          </div>
+          <h4>No Attendance Data Available</h4>
+          <p>Start tracking attendance to see monthly summaries</p>
+        </div>
+      {% endif %}
+
+      <div class="text-center">
+        <a href="{{ url_for('attendance_months') }}" class="btn btn-back">
+          <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Add month-specific icons
+    document.querySelectorAll('.month-item').forEach((item, index) => {
+      const icons = [
+        'fa-snowflake', 'fa-heart', 'fa-clover', 'fa-umbrella-beach',
+        'fa-leaf', 'fa-sun', 'fa-ice-cream', 'fa-school',
+        'fa-apple-whole', 'fa-ghost', 'fa-tree', 'fa-gift'
+      ];
+      item.querySelector('.month-icon i').className = `fas ${icons[index]}`;
+      
+      // Add color variation
+      const hues = [0, 30, 60, 120, 180, 210, 240, 270, 300, 330, 350, 20];
+      item.querySelector('.month-icon').style.color = `hsl(${hues[index]}, 70%, 50%)`;
+      item.querySelector('.month-icon').style.backgroundColor = `hsla(${hues[index]}, 70%, 50%, 0.1)`;
+    });
+  </script>
+</body>
+</html>

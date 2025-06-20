@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "rollno": 101,
+        "name": "David"
+    },
+    {
+        "id": 2,
+        "rollno": 102,
+        "name": "Bob"
+    },
+    {
+        "id": 3,
+        "rollno": 103,
+        "name": "Alice"
+    },
+    {
+        "id": 4,
+        "rollno": 104,
+        "name": "Muhammed jishan"
+    }
+]

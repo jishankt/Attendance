@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Absentees on {{ date }} | Attendance Pro</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --secondary: #3f37c9;
+      --danger: #ef4444;
+      --success: #10b981;
+      --light: #f8f9fa;
+      --dark: #1e293b;
+      --glass: rgba(255, 255, 255, 0.25);
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      color: var(--dark);
+      padding: 2rem 0;
+    }
+    
+    .absentees-container {
+      background: var(--glass);
+      backdrop-filter: blur(16px);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .page-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .page-title {
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+    
+    .date-badge {
+      background: linear-gradient(45deg, var(--danger), #f87171);
+      color: white;
+      padding: 0.5rem 1.25rem;
+      border-radius: 50px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    
+    .absentees-list {
+      background: rgba(255,255,255,0.6);
+      backdrop-filter: blur(10px);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      margin: 2rem 0;
+    }
+    
+    .list-group-item {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: rgba(255,255,255,0.8);
+      transition: all 0.3s ease;
+    }
+    
+    .list-group-item:last-child {
+      border-bottom: none;
+    }
+    
+    .list-group-item:hover {
+      background: white;
+      transform: translateX(5px);
+    }
+    
+    .student-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, var(--danger), #fca5a5);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+    
+    .all-present {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      color: var(--success);
+      border-radius: 14px;
+      padding: 1.5rem;
+      text-align: center;
+      margin: 2rem 0;
+    }
+    
+    .all-present-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--success);
+    }
+    
+    .btn-back {
+      background: rgba(255,255,255,0.3);
+      border: 1px solid rgba(255,255,255,0.4);
+      color: var(--dark);
+      border-radius: 10px;
+      padding: 0.75rem 1.5rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+    }
+    
+    .btn-back:hover {
+      background: rgba(255,255,255,0.5);
+      transform: translateY(-2px);
+      color: var(--dark);
+    }
+    
+    .absent-count {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="absentees-container">
+      <div class="page-header">
+        <h1 class="page-title">
+          <i class="fas fa-user-slash"></i> Absent Students
+        </h1>
+        <div class="date-badge">
+          <i class="fas fa-calendar-day"></i> {{ date }}
+        </div>
+      </div>
+
+      {% if absent_students %}
+        <div class="absent-count">
+          <i class="fas fa-users-slash"></i> {{ absent_students|length }} {{ 'Absentee' if absent_students|length == 1 else 'Absentees' }}
+        </div>
+        
+        <div class="absentees-list">
+          <ul class="list-group">
+            {% for student in absent_students %}
+            <li class="list-group-item">
+              <div class="student-avatar">
+                {{ student.name[0]|upper }}
+              </div>
+              <div>
+                <div class="fw-bold">{{ student.name }}</div>
+                <small class="text-muted">Roll No: {{ student.rollno }}</small>
+              </div>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% else %}
+        <div class="all-present">
+          <div class="all-present-icon">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <h4>Perfect Attendance!</h4>
+          <p class="mb-0">All students were present on {{ date }}</p>
+        </div>
+      {% endif %}
+
+      <div class="text-center">
+        <a href="{{ url_for('view_attendance_by_date', date=date) }}" class="btn btn-back">
+          <i class="fas fa-arrow-left"></i> Back to Attendance
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Add animation to list items
+    document.querySelectorAll('.list-group-item').forEach(item => {
+      item.addEventListener('mouseenter', () => {
+        item.style.transform = 'translateX(5px)';
+      });
+      item.addEventListener('mouseleave', () => {
+        item.style.transform = 'translateX(0)';
+      });
+    });
+  </script>
+</body>
+</html>

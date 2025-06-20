@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attendance on {{ selected_date }} | Attendance Pro</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --secondary: #3f37c9;
+      --accent: #4cc9f0;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #3b82f6;
+      --light: #f8f9fa;
+      --dark: #1e293b;
+      --glass: rgba(255, 255, 255, 0.25);
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      color: var(--dark);
+      padding: 2rem 0;
+    }
+    
+    .header-container {
+      background: var(--glass);
+      backdrop-filter: blur(16px);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    
+    .page-title {
+      font-weight: 700;
+      margin-bottom: 0;
+    }
+    
+    .date-highlight {
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .action-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .btn-action {
+      border-radius: 10px;
+      padding: 0.75rem 1.25rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: none;
+    }
+    
+    .btn-back {
+      background: rgba(255,255,255,0.3);
+      border: 1px solid rgba(255,255,255,0.4);
+      color: var(--dark);
+    }
+    
+    .btn-back:hover {
+      background: rgba(255,255,255,0.5);
+      transform: translateY(-2px);
+    }
+    
+    .btn-add {
+      background: linear-gradient(45deg, var(--success), #34d399);
+      color: white;
+    }
+    
+    .btn-add:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+    
+    .btn-absent {
+      background: linear-gradient(45deg, var(--warning), #fbbf24);
+      color: white;
+    }
+    
+    .btn-absent:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    }
+    
+    .btn-download {
+      background: linear-gradient(45deg, var(--info), #60a5fa);
+      color: white;
+    }
+    
+    .btn-download:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+    
+    .attendance-table {
+      background: var(--glass);
+      backdrop-filter: blur(14px);
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+    
+    .table-header {
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      color: white;
+    }
+    
+    .table th {
+      font-weight: 600;
+      padding: 1rem;
+    }
+    
+    .table td {
+      padding: 1rem;
+      vertical-align: middle;
+    }
+    
+    .btn-delete {
+      background: linear-gradient(45deg, var(--danger), #f87171);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .btn-delete:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      background: var(--glass);
+      backdrop-filter: blur(14px);
+      border-radius: 16px;
+      border: 1px dashed rgba(255,255,255,0.4);
+    }
+    
+    .empty-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(45deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .attendance-badge {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header-container">
+      <div class="d-flex justify-content-between align-items-center">
+        <h1 class="page-title">
+          <i class="fas fa-calendar-day me-2"></i>
+          Attendance on <span class="date-highlight">{{ selected_date }}</span>
+        </h1>
+        {% if attendance %}
+        <span class="attendance-badge">
+          <i class="fas fa-user-check"></i>
+          {{ attendance|length }} {{ 'student' if attendance|length == 1 else 'students' }}
+        </span>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="action-bar">
+      <a href="{{ url_for('list_attendance_dates') }}" class="btn btn-action btn-back">
+        <i class="fas fa-arrow-left"></i> Back to Dates
+      </a>
+      <a href="{{ url_for('add_attendance') }}" class="btn btn-action btn-add">
+        <i class="fas fa-plus"></i> Add Attendance
+      </a>
+      <a href="{{ url_for('get_absent_students', date=selected_date) }}" class="btn btn-action btn-absent">
+        <i class="fas fa-user-slash"></i> View Absentees
+      </a>
+      <a href="{{ url_for('download_absentees', date=selected_date) }}" class="btn btn-action btn-download">
+        <i class="fas fa-file-export"></i> Download List
+      </a>
+    </div>
+
+    {% if attendance %}
+    <div class="attendance-table">
+      <table class="table table-hover mb-0">
+        <thead class="table-header">
+          <tr>
+            <th style="width: 15%;">ID</th>
+            <th style="width: 60%;">Student Name</th>
+            <th style="width: 25%;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for record in attendance %}
+          <tr>
+            <td>{{ record.rollno }}</td>
+            <td>{{ record.name }}</td>
+            <td>
+              <form method="POST" action="{{ url_for('delete_attendance', date=selected_date, rollno=record.rollno) }}" onsubmit="return confirm('Are you sure you want to delete this record?');">
+                <button type="submit" class="btn btn-delete btn-sm">
+                  <i class="fas fa-trash-alt"></i> Remove
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">
+        <i class="fas fa-calendar-times"></i>
+      </div>
+      <h4>No Attendance Records Found</h4>
+      <p class="text-muted">No students marked as present on {{ selected_date }}</p>
+      <div class="mt-4">
+        <a href="{{ url_for('add_attendance') }}" class="btn btn-action btn-add me-2">
+          <i class="fas fa-plus"></i> Add Attendance
+        </a>
+        <a href="{{ url_for('get_absent_students', date=selected_date) }}" class="btn btn-action btn-absent">
+          <i class="fas fa-user-slash"></i> View Absentees
+        </a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <script>
+    // Add confirmation before delete
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        if (!confirm('Are you sure you want to delete this attendance record?')) {
+          e.preventDefault();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
