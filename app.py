@@ -258,5 +258,8 @@ def download_absentees(date):
     return f"No absentee list found for {date}", 404
 
 # Run app
+import os
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))  # Render sets PORT env variable
+    app.run(host="0.0.0.0", port=port)
